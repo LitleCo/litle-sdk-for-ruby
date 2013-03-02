@@ -60,12 +60,12 @@ module LitleOnline
     
     def self.validate_required(value, required, class_name, field_name)
       if(required)
-        if(value.nil?)
+        if((value.is_a?(Array) && value.empty?) || value.nil?)
           raise "If #{class_name} is specified, it must have a #{field_name}"
         end
       end
     end
-    
+
     def self.validate_length(value, required, min, max, class_name, field_name)
       validate_required(value, required, class_name, field_name)
       if(value.nil?)
@@ -587,6 +587,29 @@ module LitleOnline
         this.sellerMerchantCategoryCode = base['sellerMerchantCategoryCode']
         SchemaValidation.validate_length(this.sellerId, false, 1, 16, name, 'sellerId')
         SchemaValidation.validate_length(this.sellerMerchantCategoryCode, false, 1, 4, name, 'sellerMerchantCategoryCode')
+        this
+      else
+        nil
+      end
+    end
+  end
+
+  class Token
+    include XML::Mapping
+    text_node :litleToken, "litleToken", :default_value=>nil
+    text_node :expDate, "expDate", :default_value=>nil
+    text_node :cardValidationNum, "cardValidationNum", :default_value=>nil
+      
+    def self.from_hash(hash, name='token')
+      base = hash[name]
+      if(base)
+        this = Token.new
+        this.litleToken = base['litleToken']
+        this.expDate = base['expDate']
+        this.cardValidationNum = base['cardValidationNum']
+        SchemaValidation.validate_length(this.litleToken, true, 13, 25, name, 'litleToken')
+        SchemaValidation.validate_length(this.expDate, false, 4, 4, name, 'expDate')
+        SchemaValidation.validate_length(this.cardValidationNum, false, 1, 4, name, 'cardValidationNum')
         this
       else
         nil
@@ -1164,7 +1187,76 @@ module LitleOnline
     text_node :cardValidationNum, "cardValidationNum", :default_value=>nil
   end
   
+  class AccountUpdateFileRequestData
+    include XML::Mapping
+    text_node :merchantId, "merchantId", :default_value=>nil
+    text_node :postDay, "postDay", :default_value=>nil
+    def self.from_hash(hash, name='accountUpdateFileRequestData')
+      base = hash[name]
+      if(base)
+        this = AccountUpdateFileRequestData.new
+        this.merchantId = base['merchantId'] || hash['merchantId']
+        this.postDay = base['postDay']
+        SchemaValidation.validate_required(this.merchantId, true, name, 'merchantId')
+        SchemaValidation.validate_date(this.postDay, false, name, 'postDay')
+        this
+      else
+        nil
+      end
+    end
+  end
   
+  class RFRRequest
+    include XML::Mapping
+    optional_choice_node :if,    'accountUpdateFileRequestData', :then, (object_node :accountUpdateFileRequestData, "accountUpdateFileRequestData", :class=>AccountUpdateFileRequestData, :default_value=>nil),
+    :elsif, 'litleSessionId', :then, (text_node :litleSessionId, "@litleSessionId", :default_value=>nil)
+  end
+
+  class AccountUpdate
+    include XML::Mapping
+    text_node :reportGroup, "@reportGroup", :default_value=>nil
+    text_node :orderId, "orderId", :default_value=>nil
+    optional_choice_node :if,    'card', :then, (object_node :card, "card", :class=>Card, :default_value=>nil),
+    :elsif, 'token', :then, (object_node :token, "token", :class=>Token, :default_value=>nil)
+    def self.from_hash(hash, index=0, name='accountUpdate')
+      base = hash[name][index]
+      if(base)
+        this = AccountUpdate.new
+        this.orderId = base['orderId']
+        SchemaValidation.validate_length(this.orderId, true, 1, 25, name, 'orderId')
+        this
+      else
+        nil
+      end
+    end
+  end
+
+  class BatchRequest
+    include XML::Mapping
+    text_node :merchantId, "@merchantId", :default_value=>nil
+    text_node :numAccountUpdates, "@numAccountUpdates", :default_value=>nil
+    array_node :accountUpdate, "", "accountUpdate", :class=>AccountUpdate, :default_value=>[]
+    def self.from_hash(hash, name='batchRequest')
+      base = hash[name]
+      if(base)
+        this = BatchRequest.new
+        if(base['accountUpdate'])
+          base['accountUpdate'].each_index do |index|
+            accountUpdate = AccountUpdate.from_hash(base,index)
+            accountUpdateHash = base['accountUpdate'][index]
+            accountUpdate.card = Card.from_hash(accountUpdateHash)
+            accountUpdate.token = Token.from_hash(accountUpdateHash)
+            this.accountUpdate << accountUpdate
+          end
+        end
+        SchemaValidation.validate_required(this.accountUpdate, true, name, 'accountUpdate')
+        this
+      else
+        nil
+      end
+    end
+  end
+
   class OnlineRequest
     include XML::Mapping
     root_element_name "litleOnlineRequest"
@@ -1199,10 +1291,23 @@ module LitleOnline
     
   end
   
+  class LitleRequest
+    include XML::Mapping
+    root_element_name "litleRequest"
+    text_node :version, "@version", :default_value=>nil
+    text_node :xmlns, "@xmlns", :default_value=>nil
+    text_node :id, "@requestId", :default_value=>nil
+    text_node :numBatchRequests, "@numBatchRequests", :default_value=>nil
+    object_node :authentication, "authentication", :class=>Authentication
+    optional_choice_node   :if,    'RFRRequest', :then, (object_node :rfr_request, "RFRRequest", :class=>RFRRequest),
+    :elsif, 'batchRequest', :then, (object_node :batch_request, "batchRequest", :class=>BatchRequest)
+  end
+  
+  
   class LitleOnlineResponse
     attr_accessor :message
   end
-  
+
   class XMLFields
   
   end

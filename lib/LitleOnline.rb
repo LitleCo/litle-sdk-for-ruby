@@ -49,6 +49,7 @@ require_relative 'Communications'
 require_relative 'LitleXmlMapper'
 require_relative 'XMLFields'
 require_relative 'LitleOnlineRequest'
+require_relative 'LitleRequest'
 require_relative 'Configuration'
 
 #allows attribute values to be in double quotes, required by Litle Server
