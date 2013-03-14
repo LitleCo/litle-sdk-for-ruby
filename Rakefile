@@ -74,7 +74,7 @@ namespace :test do
   Rake::TestTask.new do |t|
     t.libs << '.'
     t.name = 'certification'
-    t.test_files = FileList['test/certification/certTest*.rb']
+    t.test_files = FileList['test/certification/ts_all.rb']
     t.verbose = true
   end
   

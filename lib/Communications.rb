@@ -48,14 +48,12 @@ module LitleOnline
         https.verify_mode = OpenSSL::SSL::VERIFY_PEER
         https.ca_file = File.join(File.dirname(__FILE__), "cacert.pem")
       end
+      url_path = url.path.empty? ? "/" : url.path
       https.start { |http|
-        response = http.request_post(url.path, post_data.to_s, {'Content-type'=>'text/xml'})
+        response = http.request_post(url_path, post_data.to_s, {'Content-type'=>'text/xml'})
         response_xml = response
       }
       
-      
-  
-  
       # validate response, only an HTTP 200 will work, redirects are not followed
       case response_xml
       when Net::HTTPOK

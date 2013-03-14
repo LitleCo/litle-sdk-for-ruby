@@ -2511,5 +2511,125 @@ module LitleOnline
       assert_equal "If recyclingRequest recycleId is specified, it must be between 1 and 25 characters long", exception.message
     end
 
+    def test_Token_litleToken
+      assert_equal("abcdefhijklmn", Token.from_hash({'token'=>{'accType'=>'Checking','litleToken'=>'abcdefhijklmn','routingNum'=>'123456789'}}).litleToken)
+      assert_equal("1234567890123456789012345", Token.from_hash({'token'=>{'accType'=>'Checking','litleToken'=>'1234567890123456789012345','routingNum'=>'123456789'}}).litleToken)
+      exception = assert_raise(RuntimeError){
+        Token.from_hash({ 'token'=>{'litleToken'=>'123456789012','routingNum'=>'123456789','accType'=>'Checking'}})
+      }
+      assert_equal "If token litleToken is specified, it must be between 13 and 25 characters long", exception.message            
+      exception = assert_raise(RuntimeError){
+        Token.from_hash({ 'token'=>{'litleToken'=>'12345678901234567890123456','routingNum'=>'123456789','accType'=>'Checking'}})
+      }
+      assert_equal "If token litleToken is specified, it must be between 13 and 25 characters long", exception.message            
+      exception = assert_raise(RuntimeError){
+        Token.from_hash({ 'token'=>{'routingNum'=>'123456789','accType'=>'Checking'}})
+      }
+      assert_equal "If token is specified, it must have a litleToken", exception.message            
+    end
+
+    def test_Token_expDate
+      assert_equal(nil, Token.from_hash({'token'=>{'litleToken'=>'1234567890123456789012345'}}).expDate)
+      assert_equal("abcd", Token.from_hash({'token'=>{'litleToken'=>'1234567890123456789012345', 'expDate'=>'abcd'}}).expDate)
+      assert_equal("1234", Token.from_hash({'token'=>{'litleToken'=>'1234567890123456789012345', 'expDate'=>'1234'}}).expDate)
+      exception = assert_raise(RuntimeError){
+        Token.from_hash({ 'token'=>{'litleToken'=>'1234567890123456789012345', 'expDate'=>'123'}})
+      }
+      assert_equal "If token expDate is specified, it must be between 4 and 4 characters long", exception.message            
+      exception = assert_raise(RuntimeError){
+        Token.from_hash({ 'token'=>{'litleToken'=>'1234567890123456789012345', 'expDate'=>'12345'}})
+      }
+      assert_equal "If token expDate is specified, it must be between 4 and 4 characters long", exception.message            
+    end
+
+    def test_Token_cardValidationNum
+      assert_equal(nil, Card.from_hash({'card'=>{'litleToken'=>'1234567890123456789012345'}}).cardValidationNum)
+      assert_equal("a", Card.from_hash({'card'=>{'litleToken'=>'1234567890123456789012345', 'cardValidationNum'=>'a'}}).cardValidationNum)
+      assert_equal("1234", Card.from_hash({'card'=>{'litleToken'=>'1234567890123456789012345', 'cardValidationNum'=>'1234'}}).cardValidationNum)      
+      exception = assert_raise(RuntimeError){
+        Card.from_hash({ 'card'=>{'litleToken'=>'1234567890123456789012345', 'cardValidationNum'=>'12345'}})
+      }
+      assert_equal "If card cardValidationNum is specified, it must be between 1 and 4 characters long", exception.message                  
+    end
+
+    def test_AccountUpdate_orderId
+      hash = {
+       'accountUpdate' => [
+          {'orderId' => '123456789'}
+        ]
+      }
+      assert_equal('123456789', AccountUpdate.from_hash(hash).orderId)
+      exception = assert_raise(RuntimeError){
+        AccountUpdate.from_hash({ 'accountUpdate' => [{'orderId' => nil}] }, 0)
+      }
+      assert_equal "If accountUpdate is specified, it must have a orderId", exception.message
+      exception = assert_raise(RuntimeError){
+        AccountUpdate.from_hash({ 'accountUpdate' => [{'orderId' => '1'*51}] }, 0)
+      }
+      assert_equal "If accountUpdate orderId is specified, it must be between 1 and 25 characters long", exception.message                  
+    end
+
+    def test_BatchRequest_accountUpdate
+      hash = {
+        'merchantId' => '101',
+        'batchRequest' => {
+          'accountUpdate' => [
+          ]
+        }
+      }
+      exception = assert_raise(RuntimeError){
+        BatchRequest.from_hash(hash)
+      }
+      assert_equal "If batchRequest is specified, it must have a accountUpdate", exception.message
+    end
+
+    def test_AccountUpdateFileRequestData_merchantId
+      hash = {
+        'accountUpdateFileRequestData' => {
+          'postDay' => '2013-03-12',
+          'merchantId' => '101',
+        }
+      }
+      assert_equal('101', AccountUpdateFileRequestData.from_hash(hash).merchantId)
+
+      hash = {
+        'merchantId' => '101',
+        'accountUpdateFileRequestData' => {
+          'postDay' => '2013-03-12',
+        }
+      }
+      assert_equal('101', AccountUpdateFileRequestData.from_hash(hash).merchantId)
+
+      hash = {
+        'accountUpdateFileRequestData' => {
+          'postDay' => '2013-03-12',
+        }
+      }
+      exception = assert_raise(RuntimeError){
+        AccountUpdateFileRequestData.from_hash(hash)
+      }
+      assert_equal "If accountUpdateFileRequestData is specified, it must have a merchantId", exception.message
+    end
+
+     def test_AccountUpdateFileRequestData_postDay
+        hash = {
+          'accountUpdateFileRequestData' => {
+            'postDay' => '2013-03-12',
+            'merchantId' => '101',
+          }
+        }
+        assert_equal('2013-03-12', AccountUpdateFileRequestData.from_hash(hash).postDay)
+
+        hash = {
+          'accountUpdateFileRequestData' => {
+            'postDay' => '2013-03-122',
+            'merchantId' => '101',
+          }
+        }
+        exception = assert_raise(RuntimeError){
+          AccountUpdateFileRequestData.from_hash(hash)
+        }
+        assert_equal "If accountUpdateFileRequestData postDay is specified, it must match the regular expression /\\A\\d{4}-\\d{2}-\\d{2}\\Z/", exception.message
+     end
   end
 end
