@@ -105,10 +105,6 @@ module LitleOnline
       options['merchantId'] || @config_hash['currency_merchant_map']['DEFAULT']
     end
 
-    def get_merchant_sdk(options)
-      options['merchantSdk'] || 'Ruby;8.9'
-    end
-
     def get_report_group(options)
       options['reportGroup'] || @config_hash['default_report_group']
     end

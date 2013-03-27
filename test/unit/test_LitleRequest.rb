@@ -84,14 +84,6 @@ module LitleOnline
       response = LitleRequest.new.account_updater_request_for_response(rfr_request)
     end
   
-    def test_set_merchant_sdk
-      litle = LitleRequest.new
-      #Explicit - used for integrations
-      assert_equal 'ActiveMerchant;3.2', litle.send(:get_merchant_sdk, {'merchantSdk'=>'ActiveMerchant;3.2'})
-      #Implicit - used raw when nothing is specified
-      assert_equal 'Ruby;8.9', litle.send(:get_merchant_sdk, {'NotMerchantSdk'=>'ActiveMerchant;3.2'})
-    end
-  
     private
 
     def rfr_request
