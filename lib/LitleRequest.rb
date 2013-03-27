@@ -113,10 +113,6 @@ module LitleOnline
       options[field.to_s] == nil ? @config_hash[field.to_s] : options[field.to_s]
     end
     
-    def get_logged_in_user(options)
-      options['loggedInUser'] || nil
-    end
-
     def get_id(options)
       options['id'] || nil
     end
