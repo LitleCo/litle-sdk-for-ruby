@@ -52,6 +52,7 @@ require_relative 'LitleBatchRequest'
 require_relative 'LitleOnlineRequest'
 require_relative 'LitleRequest'
 require_relative 'LitleListeners'
+require_relative 'EnvironmentVariables'
 require_relative 'Configuration'
 
 #allows attribute values to be in double quotes, required by Litle Server

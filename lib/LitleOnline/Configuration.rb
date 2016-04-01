@@ -36,32 +36,32 @@ module LitleOnline
 
     def config
       begin
-        if !(ENV['LITLE_CONFIG_DIR'].nil?)
-          config_file = ENV['LITLE_CONFIG_DIR'] + "/.litle_SDK_config.yml"
-        else
-          config_file = ENV['HOME'] + "/.litle_SDK_config.yml"        
-        end
+        config_dir = ENV.fetch('LITLE_CONFIG_DIR', ENV['HOME'])
+        config_file = File.join(config_dir, '.litle_SDK_config.yml')
+
         #if Env variable exist, then just override the data from config file
-         if (File.exists?(config_file))
-          datas=YAML.load_file(config_file)  
-         else         
-          environments = EnvironmentVariables.new   
-          datas={}
-          environments.instance_variables.each {|var| datas[var.to_s.delete("@")] = environments.instance_variable_get(var) }          
-         end
-          datas.each {|key,value| setENV(key,datas)}                      
+        if File.exist?(config_file)
+          datas = YAML.load_file(config_file)
+        else
+          environments = EnvironmentVariables.new
+          datas = {}
+          environments.instance_variables.each { |var| datas[var.to_s.delete("@")] = environments.instance_variable_get(var) }
+        end
+
+        datas.each { |key, value| setENV(key, datas) }
         return datas
-      rescue   
+      rescue => e
         return {}
       end
-  
+
     end
-    def setENV(key,datas)
+
+    def setENV(key, datas)
       if !(ENV['litle_'+key].nil?)
-       datas[key]=ENV['litle_'+key]
+        datas[key]=ENV['litle_'+key]
       end
     end
-    
+
   end
 
 end
