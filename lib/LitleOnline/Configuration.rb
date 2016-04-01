@@ -29,39 +29,37 @@ require 'yaml'
 #
 module LitleOnline
   class Configuration
+    DEFAULT = LitleOnline::EnvironmentVariables.default
+
     class << self
       # External logger, if specified
       attr_accessor :logger
     end
 
     def config
-      begin
-        config_dir = ENV.fetch('LITLE_CONFIG_DIR', ENV['HOME'])
-        config_file = File.join(config_dir, '.litle_SDK_config.yml')
+      config_dir = ENV.fetch('LITLE_CONFIG_DIR', ENV['HOME'])
+      config_file = File.join(config_dir, '.litle_SDK_config.yml')
 
-        #if Env variable exist, then just override the data from config file
-        if File.exist?(config_file)
-          datas = YAML.load_file(config_file)
-        else
-          environments = EnvironmentVariables.new
-          datas = {}
-          environments.instance_variables.each { |var| datas[var.to_s.delete("@")] = environments.instance_variable_get(var) }
-        end
-
-        datas.each { |key, value| setENV(key, datas) }
-        return datas
-      rescue => e
-        return {}
+      # if Env variable exist, then just override the data from config file
+      if File.exist?(config_file)
+        YAML.load_file(config_file).merge(env_vars)
+      else
+        DEFAULT.merge(env_vars)
       end
-
+    rescue
+      DEFAULT
     end
 
-    def setENV(key, datas)
-      if !(ENV['litle_'+key].nil?)
-        datas[key]=ENV['litle_'+key]
-      end
-    end
+    def env_vars
+      litle_vars = ENV.select { |k, _v| k.start_with?('litle_') }
 
+      env_vars = litle_vars.map do |k, v|
+        [k.gsub('litle_', ''), v]
+      end
+
+      known_vars = env_vars.select { |k, _v| DEFAULT.keys.include?(k) }
+
+      Hash[known_vars]
+    end
   end
-
 end
