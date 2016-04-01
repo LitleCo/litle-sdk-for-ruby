@@ -1,0 +1,52 @@
+PATH
+  remote: .
+  specs:
+    LitleOnline (9.3.2)
+      crack
+      libxml-ruby
+      net-sftp
+      xml-mapping
+      xml-object
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    byebug (8.2.2)
+    coderay (1.1.1)
+    crack (0.4.3)
+      safe_yaml (~> 1.0.0)
+    libxml-ruby (2.8.0)
+    metaclass (0.0.4)
+    method_source (0.8.2)
+    mocha (1.1.0)
+      metaclass (~> 0.0.1)
+    net-sftp (2.1.2)
+      net-ssh (>= 2.6.5)
+    net-ssh (3.1.1)
+    power_assert (0.2.7)
+    pry (0.10.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    pry-byebug (3.3.0)
+      byebug (~> 8.0)
+      pry (~> 0.10)
+    safe_yaml (1.0.4)
+    slop (3.6.0)
+    test-unit (3.1.8)
+      power_assert
+    xml-mapping (0.10.0)
+    xml-object (0.9.93)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  LitleOnline!
+  bundler (~> 1.11)
+  mocha
+  pry-byebug (~> 3.3)
+  test-unit (~> 3.1, >= 3.1.8)
+
+BUNDLED WITH
+   1.11.2

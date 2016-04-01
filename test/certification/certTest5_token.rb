@@ -1,4 +1,4 @@
-require File.expand_path("../../../lib/LitleOnline",__FILE__) 
+require File.expand_path("../../../lib/LitleOnline/LitleOnline",__FILE__)
 require 'test/unit'
 
 module LitleOnline

@@ -23,7 +23,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 =end
 
-require File.expand_path("../../../lib/LitleOnline",__FILE__) 
+require File.expand_path('../../../lib/LitleOnline/LitleOnline', __FILE__) 
 
 
 #test driver for running all tests

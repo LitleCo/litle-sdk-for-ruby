@@ -23,7 +23,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 =end
 require 'test/unit'
-require File.expand_path("../../../lib/LitleOnline",__FILE__) 
+require File.expand_path('../../../lib/LitleOnline/LitleOnline', __FILE__) 
 
 
 require_relative 'test_xmlfields'
