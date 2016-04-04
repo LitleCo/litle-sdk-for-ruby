@@ -22,21 +22,11 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 =end
-require 'rubygems'
-require 'rubygems/package_task'
+require 'bundler/gem_tasks'
 require 'rake/testtask'
 require 'rake/clean'
 
-=begin
-Gem::PackageTask.new(spec) do |pkg|
-  pkg.gem_spec = spec
-  pkg.need_zip = true
-  pkg.need_tar = true
-end
-=end
-
 namespace :test do
-
   Rake::TestTask.new do |t|
     t.libs << '.'
     t.name = 'unit'
@@ -64,7 +54,6 @@ namespace :test do
     t.test_files = FileList['test/**/*.rb']
     t.verbose = true
   end
-  
 end
 
 task :default =>'gem'
