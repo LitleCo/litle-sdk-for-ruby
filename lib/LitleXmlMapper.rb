@@ -55,7 +55,7 @@ module LitleOnline
     def self.initialize_logger(config_hash)
       # Sadly, this needs to be static (the alternative would be to change the LitleXmlMapper.request API
       # to accept a Configuration instance instead of the config_hash)
-      Configuration.logger ||= default_logger config_hash['printxml'] ? Logger::DEBUG : Logger::INFO
+      Configuration.logger ||= default_logger(default_logging_level(config_hash))
     end
 
     def self.default_logger(level) # :nodoc:
@@ -64,6 +64,17 @@ module LitleOnline
       # Backward compatible logging format for pre 8.16
       logger.formatter = proc { |severity, datetime, progname, msg| "#{msg}\n" }
       logger
+    end
+
+    def self.default_logging_level(config_hash)
+      # See http://www.yaml.org/refcard.html for supported true/false values (Language Independent Scalar types section)
+      # Be more generic though and accept 'false' as a FalseClass instance
+      # See discussion: https://github.com/LitleCo/litle-sdk-for-ruby/pull/7
+      if !config_hash['printxml'] or config_hash['printxml'] =~ (/(false|f|no|n|0)$/i)
+        Logger::INFO
+      else
+        Logger::DEBUG
+      end
     end
   end
 end
