@@ -779,26 +779,26 @@ module LitleOnline
     end
   end
 
-  class PayPal
-    include XML::Mapping
-    text_node :payerId, "payerId", :default_value=>nil
-    text_node :token, "token", :default_value=>nil
-    text_node :transactionId, "transactionId", :default_value=>nil
-    def self.from_hash(hash, name='payPal')
-      base = hash[name]
-      if(base)
-        this = PayPal.new
-        this.payerId = base['payerId']
-        this.token = base['token']
-        this.transactionId = base['transactionId']
-        SchemaValidation.validate_required(this.payerId, true, name, 'payerId')
-        SchemaValidation.validate_required(this.transactionId, true, name, 'transactionId')
-        this
-      else
-        nil
-      end
-    end
-  end
+  # class PayPal
+  #   include XML::Mapping
+  #   text_node :payerId, "payerId", :default_value=>nil
+  #   text_node :token, "token", :default_value=>nil
+  #   text_node :transactionId, "transactionId", :default_value=>nil
+  #   def self.from_hash(hash, name='payPal')
+  #     base = hash[name]
+  #     if(base)
+  #       this = PayPal.new
+  #       this.payerId = base['payerId']
+  #       this.token = base['token']
+  #       this.transactionId = base['transactionId']
+  #       SchemaValidation.validate_required(this.payerId, true, name, 'payerId')
+  #       SchemaValidation.validate_required(this.transactionId, true, name, 'transactionId')
+  #       this
+  #     else
+  #       nil
+  #     end
+  #   end
+  # end
 
   class CreditPayPal
     include XML::Mapping

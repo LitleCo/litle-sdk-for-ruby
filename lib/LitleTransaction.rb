@@ -568,7 +568,7 @@ module LitleOnline
       transaction.recyclingRequest          = RecyclingRequest.from_hash(options)
       transaction.fraudFilterOverride       = options['fraudFilterOverride']
       transaction.customBilling             = CustomBilling.from_hash(options)
-      transaction.paypal                    = PayPal.from_hash(options,'paypal')
+      # transaction.paypal                    = PayPal.from_hash(options,'paypal')
       transaction.applepay                  = Applepay.from_hash(options,'applepay')
 
       add_order_info(transaction, options)
